@@ -1,0 +1,17 @@
+<h1><%=@actor[0]["name"]%></h1>
+
+  <table>
+  <tr>
+  <th>Movie</th>
+  <th>Character</th>
+  </tr>
+  <tr>
+  <% @actor.each do |role|%>
+  <td><a href= "/movies/<%=role["movie_id"]%>"><%=role["title"]%></a></td>
+  <td><%=role["character"]%></td>
+  </tr>
+  <% end %>
+  </table>
+
+<br>
+<a href="/actors" class = "back_button">Back to Actors</a>

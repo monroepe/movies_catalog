@@ -1,0 +1,22 @@
+#actors main
+SELECT actors.name, actors.id FROM actors
+ORDER BY actors.name;
+
+Select cast_members.character, movies.title, actors.name
+FROM cast_members
+JOIN movies ON movies.id = cast_members.movie_id
+JOIN actors ON cast_members.actor_id = actors.id
+WHERE cast_members.actor_id = 1;
+
+SELECT movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio
+FROM movies
+JOIN genres ON movies.genre_id = genres.id
+LEFT OUTER JOIN studios ON movies.studio_id = studios.id;
+
+SELECT movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio, cast_members.character, actors.name as actor
+FROM movies
+JOIN cast_members ON movies.id = cast_members.movie_id
+JOIN actors ON cast_members.actor_id = actors.id
+JOIN genres ON movies.genre_id = genres.id
+LEFT OUTER JOIN studios ON movies.studio_id = studios.id
+WHERE movies.id = 200;
