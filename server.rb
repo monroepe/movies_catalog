@@ -15,29 +15,46 @@ def db_connection
 end
 
 
-
-get '/movies' do
-query = 'SELECT movies.id, movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio
-FROM movies
-JOIN genres ON movies.genre_id = genres.id
-LEFT OUTER JOIN studios ON movies.studio_id = studios.id
-ORDER BY movies.title;'
-
-db_connection do |conn|
-@movies = conn.exec(query).to_a
+get '/' do
+  redirect '/movies'
 end
 
-erb :'movies/index'
+get '/movies' do
+
+  query = 'SELECT movies.id, movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio
+    FROM movies
+    JOIN genres ON movies.genre_id = genres.id
+    LEFT OUTER JOIN studios ON movies.studio_id = studios.id'
+
+  if params[:order] == 'rating'
+    query += " ORDER BY movies.rating"
+  elsif params[:order] == 'year'
+    query += " ORDER BY movies.year DESC"
+  else
+    query += " ORDER BY movies.title"
+  end
+
+  @movies = db_connection do |conn|
+    conn.exec_params(query).to_a
+  end
+
+  erb :'movies/index'
 end
 
 get '/actors' do
-  query = 'SELECT actors.name, actors.id FROM actors
-ORDER BY actors.name;'
+  if params[:page]
+    @page_num = params[:page].to_i
+  else
+    @page_num = 1
+  end
 
-db_connection do |conn|
-@actors = conn.exec(query).to_a
-end
-erb :'actors/index'
+  query = 'SELECT actors.name, actors.id FROM actors
+  ORDER BY actors.name LIMIT 20 OFFSET $1;'
+
+    db_connection do |conn|
+    @actors = conn.exec_params(query, [@page_num]).to_a
+    end
+  erb :'actors/index'
 end
 
 get '/movies/:id' do
@@ -46,8 +63,8 @@ id = params[:id]
 db_connection do |conn|
 @movie = conn.exec_params('SELECT movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio, cast_members.character, actors.name as actor, actors.id
 FROM movies
-JOIN cast_members ON movies.id = cast_members.movie_id
-JOIN actors ON cast_members.actor_id = actors.id
+LEFT OUTER JOIN cast_members ON movies.id = cast_members.movie_id
+LEFT OUTER JOIN actors ON cast_members.actor_id = actors.id
 JOIN genres ON movies.genre_id = genres.id
 LEFT OUTER JOIN studios ON movies.studio_id = studios.id
 WHERE movies.id = $1', [id]).to_a
