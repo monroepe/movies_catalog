@@ -7,7 +7,14 @@
 </ul>
 
 <br>
-<a href="/actors?page=<%= @page_num - 1 %>" class = "paginate_button">Previous Page </a><a href="/actors?page=<%= @page_num + 1 %>" class = "paginate_button">Next Page</a>
+<div>
+  <% if !on_first_page?(@page_num) %>
+    <a href="/actors?page=<%= @page_num - 1 %>">Previous</a>
+  <% end %>
+  <% if on_last_page_actors?(@page_num) %>
+    <a href="/actors?page=<%= @page_num + 1 %>">Next</a>
+  <% end %>
+</div>
 
 <br>
 <a href="/movies" class = "back_button">To Movies</a>

@@ -1,0 +1,30 @@
+body {
+    background-color: #F0F8FF;
+}
+
+h1{
+  font-size: 36pt;
+}
+
+table {
+    border-collapse: collapse;
+    width: 70%;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th {
+    height: 20px;
+    padding: 15px;
+    background-color: black;
+    color: white;
+}
+
+td {
+    text-align: center;
+    padding: 15px;
+    background-color: white;
+    font-weight: bold;
+}

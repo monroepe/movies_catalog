@@ -1,8 +1,13 @@
 <h1>Movies</h1>
 
+<form class = "search" action= '/movies/:id' method = 'get'>Search:
+<input type="text" name="search" maxlength="300" size = "40">
+<input type = "submit" value = "Submit">
+</form>
+
 <p>Sort By:</p>
 <a href="/movies?order=title">Title</a> <a href="/movies?order=year">Year</a> <a href="/movies?order=rating">Rating</a>
-
+<br>
 <br>
 <table>
   <tr>
@@ -22,3 +27,16 @@
   </tr>
   <% end %>
 </table>
+
+<br>
+<div>
+  <% if !on_first_page?(@page_num) %>
+    <a href="/movies?order=<%= params[:order]%>&page=<%= @page_num - 1 %>">Previous</a>
+  <% end %>
+  <% if on_last_page_movies?(@page_num) %>
+    <a href="/movies?order=<%= params[:order]%>&page=<%= @page_num + 1 %>">Next</a>
+  <% end %>
+</div>
+
+<br>
+<a href="/actors" class = "back_button">To Actors</a>

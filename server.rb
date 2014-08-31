@@ -14,12 +14,31 @@ def db_connection
   end
 end
 
+helpers do
+  def on_last_page_actors?(page_num)
+    page_num < 2672
+  end
+
+  def on_last_page_movies?(page_num)
+    page_num < 164
+  end
+
+  def on_first_page?(page_num)
+    page_num == 1
+  end
+end
+
 
 get '/' do
   redirect '/movies'
 end
 
 get '/movies' do
+  if params[:page]
+    @page_num = params[:page].to_i
+  else
+    @page_num = 1
+  end
 
   query = 'SELECT movies.id, movies.title, movies.year, movies.rating, genres.name AS genre, studios.name AS studio
     FROM movies
@@ -34,8 +53,10 @@ get '/movies' do
     query += " ORDER BY movies.title"
   end
 
+  query += " LIMIT 20 OFFSET $1"
+
   @movies = db_connection do |conn|
-    conn.exec_params(query).to_a
+    conn.exec_params(query, [(@page_num - 1) * 20]).to_a
   end
 
   erb :'movies/index'
@@ -52,7 +73,7 @@ get '/actors' do
   ORDER BY actors.name LIMIT 20 OFFSET $1;'
 
     db_connection do |conn|
-    @actors = conn.exec_params(query, [@page_num]).to_a
+    @actors = conn.exec_params(query, [(@page_num - 1) * 20]).to_a
     end
   erb :'actors/index'
 end
